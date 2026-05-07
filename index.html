@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#000000" />
+<meta name="description" content="facteur.humain — Creative production based in Paris. Directors & photographers." />
+<title>facteur.humain</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://player.vimeo.com">
+<link rel="preconnect" href="https://www.youtube-nocookie.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Cormorant:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="styles.css" />
+
+<link rel="preload" as="image" href="assets/covers/hero.jpg">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect fill='%23000' width='100' height='100'/%3E%3Ctext x='50' y='62' font-family='Inter,sans-serif' font-size='28' font-weight='700' fill='white' text-anchor='middle'%3Efh%3C/text%3E%3C/svg%3E">
+</head>
+<body>
+
+<!-- Custom cursor -->
+<div id="cursor" class="cursor" aria-hidden="true">
+  <div class="cursor-dot"></div>
+  <div class="cursor-ring"></div>
+</div>
+
+<!-- Loader -->
+<div id="loader" class="loader" aria-hidden="true">
+  <div class="loader-mark">
+    <span class="loader-l">facteur</span><span class="loader-dot">.</span><span class="loader-r">humain</span>
+  </div>
+  <div class="loader-bar"><span></span></div>
+</div>
+
+<!-- Top bar (always visible) -->
+<header class="topbar">
+  <a class="brand-l" href="#hero" data-cursor="link" aria-label="facteur">facteur</a>
+  <nav class="nav" aria-label="primary">
+    <a href="#artists" data-cursor="link">Artists</a>
+    <a href="#contact" data-cursor="link">Contact</a>
+  </nav>
+  <a class="brand-r" href="#hero" data-cursor="link" aria-label="humain">.humain</a>
+</header>
+
+<!-- Side index of artists (desktop) -->
+<aside class="side-index" aria-label="Artists index">
+  <ol id="sideIndex"></ol>
+</aside>
+
+<!-- Progress bar -->
+<div class="progress" aria-hidden="true"><span id="progressBar"></span></div>
+
+<main id="main">
+
+  <!-- HERO -->
+  <section id="hero" class="section hero">
+    <div class="hero-bg" aria-hidden="true"></div>
+    <h1 class="hero-title">
+      <span class="hero-l">facteur</span><span class="hero-dot">.</span><span class="hero-r">humain</span>
+    </h1>
+    <p class="hero-tag">Creative production based in Paris.</p>
+    <a href="#artists" class="hero-cta" data-cursor="link" aria-label="Voir les artistes">
+      <span>Scroll</span>
+      <svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 4v15m0 0l-6-6m6 6l6-6" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
+  </section>
+
+  <!-- MARQUEE -->
+  <section class="marquee-wrap" aria-hidden="true">
+    <div class="marquee">
+      <div class="marquee-track">
+        <span>clip · 2025</span><span>fashion week · 2026</span><span>editorial · 2025</span><span>clip · 2026</span><span>commercial · 2025</span><span>music video · 2026</span><span>documentary · 2025</span><span>fashion film · 2025</span><span>portrait · 2025</span><span>arte · 2026</span>
+      </div>
+      <div class="marquee-track" aria-hidden="true">
+        <span>clip · 2025</span><span>fashion week · 2026</span><span>editorial · 2025</span><span>clip · 2026</span><span>commercial · 2025</span><span>music video · 2026</span><span>documentary · 2025</span><span>fashion film · 2025</span><span>portrait · 2025</span><span>arte · 2026</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ARTISTS LIST -->
+  <section id="artists" class="section artists">
+    <h2 class="artists-eyebrow">ARTISTS</h2>
+    <ol class="artists-list" id="artistsList"></ol>
+  </section>
+
+  <!-- ARTIST PAGES (rendered by JS) -->
+  <div id="artistPages"></div>
+
+  <!-- CONTACT -->
+  <section id="contact" class="section contact">
+    <div class="contact-card">
+      <h2 class="contact-title"><em>Thank</em> you<span class="dot">.</span></h2>
+      <div class="contact-grid">
+        <div>
+          <span class="contact-label">Production</span>
+          <a href="mailto:contact@facteurhumain.tv" data-cursor="link">contact@facteurhumain.tv</a>
+        </div>
+        <div>
+          <span class="contact-label">Based in</span>
+          <p>Paris &middot; France</p>
+        </div>
+        <div>
+          <span class="contact-label">Follow</span>
+          <a href="https://www.instagram.com/facteur.humain.tv" target="_blank" rel="noopener" data-cursor="link">@facteur.humain.tv</a>
+        </div>
+      </div>
+    </div>
+    <footer class="footer">
+      <span>&copy; <span id="year"></span> facteur.humain</span>
+      <span>Creative production &middot; Paris</span>
+    </footer>
+  </section>
+
+</main>
+
+<!-- VIDEO PLAYER MODAL  (Vimeo / YouTube / Instagram) -->
+<div id="player" class="player" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Project preview">
+  <button id="playerClose" class="player-close" data-cursor="link" aria-label="Close">
+    <svg width="22" height="22" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <button id="playerPrev" class="player-nav player-prev" data-cursor="link" aria-label="Previous">
+    <svg width="28" height="28" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <button id="playerNext" class="player-nav player-next" data-cursor="link" aria-label="Next">
+    <svg width="28" height="28" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </button>
+  <div class="player-shell">
+    <div id="playerStage" class="player-stage"></div>
+    <div class="player-meta">
+      <span id="playerCap" class="player-cap"></span>
+      <a id="playerExternal" class="player-external" href="#" target="_blank" rel="noopener" data-cursor="link">
+        Open original
+        <svg width="12" height="12" viewBox="0 0 24 24"><path d="M7 17L17 7M17 7H8M17 7v9" stroke="currentColor" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+  </div>
+</div>
+
+<script src="script.js" defer></script>
+</body>
+</html>
