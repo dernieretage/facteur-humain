@@ -356,7 +356,7 @@ function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
     rel: item.external ? "noopener" : null
   },
     el("div", { class: "tile-frame" },
-      el("img", { src: item.img, alt: item.t || "", loading: "lazy", decoding: "async" }),
+      el("img", { src: item.img, alt: item.t || "", loading: "lazy", decoding: "async", width: "1280", height: "720" }),
       showPlay ? el("div", { class: "tile-play" }, svgIcon(playPath, 18, 18)) : null,
       platform ? el("div", { class: `tile-badge platform-${platform}` }, platformLabel(platform)) : null
     ),
