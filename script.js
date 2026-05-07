@@ -296,6 +296,18 @@ const svgIcon = (path, w = 12, h = 12) => {
   return s;
 };
 
+function makePicture(src, alt) {
+  const webp = src.replace(/\.jpg$/i, ".webp");
+  const pic = document.createElement("picture");
+  const sw = document.createElement("source");
+  sw.type = "image/webp";
+  sw.srcset = webp;
+  const img = el("img", { src, alt, loading: "lazy", decoding: "async", width: "1280", height: "720" });
+  pic.appendChild(sw);
+  pic.appendChild(img);
+  return pic;
+}
+
 function pickGridCols(count) {
   if (count <= 2) return 2;
   if (count <= 4) return 4;
@@ -356,7 +368,7 @@ function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
     rel: item.external ? "noopener" : null
   },
     el("div", { class: "tile-frame" },
-      el("img", { src: item.img, alt: item.t || "", loading: "lazy", decoding: "async", width: "1280", height: "720" }),
+      makePicture(item.img, item.t || ""),
       showPlay ? el("div", { class: "tile-play" }, svgIcon(playPath, 18, 18)) : null,
       platform ? el("div", { class: `tile-badge platform-${platform}` }, platformLabel(platform)) : null
     ),
@@ -459,14 +471,20 @@ function setupReveal() {
   $$("[data-reveal]").forEach(n => { n.dataset.persist = "1"; io.observe(n); });
 
   // Lazy-load cover background images when within 1.5 viewports
+  // Try WebP first (broadly supported), fall back to JPG.
+  const supportsWebP = (() => {
+    try { return document.createElement("canvas").toDataURL("image/webp").startsWith("data:image/webp"); }
+    catch (_) { return false; }
+  })();
   const bgIO = new IntersectionObserver((entries, obs) => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        const url = e.target.dataset.bg;
-        if (url) {
-          // Preload then apply
+        const jpgUrl = e.target.dataset.bg;
+        if (jpgUrl) {
+          const url = supportsWebP ? jpgUrl.replace(/\.jpg$/i, ".webp") : jpgUrl;
           const img = new Image();
           img.onload = () => { e.target.style.backgroundImage = `url(${url})`; };
+          img.onerror = () => { e.target.style.backgroundImage = `url(${jpgUrl})`; };
           img.src = url;
         }
         obs.unobserve(e.target);
