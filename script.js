@@ -374,7 +374,7 @@ function platformLabel(p) {
 
 function renderArtistPage(a) {
   const cover = el("div", { class: "artist-cover", "data-reveal": "" },
-    el("div", { class: "artist-cover-img", style: `background-image:url(${a.cover})` }),
+    el("div", { class: "artist-cover-img", "data-bg": a.cover }),
     el("h2", { class: "visually-hidden" }, a.name),
     el("span", { class: "artist-discipline" }, a.role)
   );
@@ -457,6 +457,23 @@ function setupReveal() {
 
   $$(".tile, .artists-list li, .gallery-sign, .gallery-title, .artist-end").forEach(n => io.observe(n));
   $$("[data-reveal]").forEach(n => { n.dataset.persist = "1"; io.observe(n); });
+
+  // Lazy-load cover background images when within 1.5 viewports
+  const bgIO = new IntersectionObserver((entries, obs) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const url = e.target.dataset.bg;
+        if (url) {
+          // Preload then apply
+          const img = new Image();
+          img.onload = () => { e.target.style.backgroundImage = `url(${url})`; };
+          img.src = url;
+        }
+        obs.unobserve(e.target);
+      }
+    });
+  }, { rootMargin: "150% 0px" });
+  $$(".artist-cover-img[data-bg]").forEach(n => bgIO.observe(n));
 }
 
 /* ============================================================
