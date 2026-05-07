@@ -339,9 +339,11 @@ function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
   const playPath = '<path d="M8 5l11 7-11 7V5z" fill="currentColor"/>';
   const isVideo = !!item.url && !item.external;
   const showPlay = isVideo && !isPhoto;
+  const e = item.url ? Embed.parse(item.url) : null;
+  const platform = e ? e.type : "";
 
   const tile = el("a", {
-    class: `tile ${ratioClass} ${isPhoto ? "no-play" : ""} ${!showPlay && !isPhoto ? "no-play" : ""}`,
+    class: `tile ${ratioClass} ${isPhoto ? "no-play" : ""} ${!showPlay && !isPhoto ? "no-play" : ""}`.trim(),
     href: item.url || "#",
     "data-cursor": "link",
     "data-img": item.img,
@@ -349,16 +351,25 @@ function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
     "data-artist": artistName,
     "data-url": item.url || "",
     "data-external": item.external ? "1" : "",
+    "data-platform": platform,
     target: item.url ? (item.external ? "_blank" : "_self") : "_self",
     rel: item.external ? "noopener" : null
   },
     el("div", { class: "tile-frame" },
       el("img", { src: item.img, alt: item.t || "", loading: "lazy", decoding: "async" }),
-      showPlay ? el("div", { class: "tile-play" }, svgIcon(playPath, 18, 18)) : null
+      showPlay ? el("div", { class: "tile-play" }, svgIcon(playPath, 18, 18)) : null,
+      platform ? el("div", { class: `tile-badge platform-${platform}` }, platformLabel(platform)) : null
     ),
     item.t ? el("div", { class: "tile-cap" }, el("span", {}, item.t)) : null
   );
   return tile;
+}
+
+function platformLabel(p) {
+  if (p === "vimeo") return "Vimeo";
+  if (p === "youtube") return "YouTube";
+  if (p === "instagram") return "Instagram";
+  return "";
 }
 
 function renderArtistPage(a) {
@@ -555,14 +566,24 @@ const Player = (() => {
       ext.style.visibility = item.url ? "visible" : "hidden";
       return;
     }
+    // Loading state with poster image
     const wrap = el("div", { class: `player-iframe-wrap player-${e.type}` });
+    const loader = el("div", { class: "player-loader" },
+      el("div", { class: "player-loader-poster", style: `background-image:url(${item.img})` }),
+      el("div", { class: "player-loader-spinner" })
+    );
+    wrap.appendChild(loader);
+
     const f = el("iframe", {
       src: e.embed,
       title: item.cap || "Video player",
-      allow: "autoplay; fullscreen; picture-in-picture; encrypted-media",
+      allow: "autoplay; fullscreen; picture-in-picture; encrypted-media; clipboard-write",
       allowfullscreen: "true",
       frameborder: "0",
       loading: "eager"
+    });
+    f.addEventListener("load", () => {
+      loader.classList.add("done");
     });
     wrap.appendChild(f);
     stage.appendChild(wrap);

@@ -298,9 +298,20 @@ body.ready .loader{opacity:0;visibility:hidden}
   transform:translate(-50%,-50%) scale(.8);opacity:0;transition:opacity .35s var(--ease),transform .35s var(--ease);
   pointer-events:none;
 }
-.tile-play svg{width:18px;height:18px;color:#fff}
+.tile-play svg{width:18px;height:18px;color:#fff;margin-left:2px}
 .tile:hover .tile-play{opacity:1;transform:translate(-50%,-50%) scale(1)}
 .tile.no-play .tile-play{display:none}
+
+.tile-badge{
+  position:absolute;top:10px;right:10px;
+  font-size:9px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;
+  padding:4px 8px;border-radius:1px;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+  color:#fff;border:1px solid rgba(255,255,255,.18);
+  opacity:0;transform:translateY(-4px);transition:opacity .4s var(--ease),transform .4s var(--ease);
+  pointer-events:none;
+}
+.tile.in:hover .tile-badge{opacity:1;transform:translateY(0)}
 
 .tile-cap{
   margin-top:14px;text-align:center;
@@ -412,7 +423,20 @@ body.ready .loader{opacity:0;visibility:hidden}
 .player-stage:empty::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0a0a0a,#020202)}
 
 .player-iframe-wrap{position:absolute;inset:0;width:100%;height:100%}
-.player-iframe-wrap iframe{width:100%;height:100%;border:0;display:block;background:#000}
+.player-iframe-wrap iframe{width:100%;height:100%;border:0;display:block;background:#000;position:relative;z-index:2}
+
+.player-loader{position:absolute;inset:0;z-index:1;display:flex;align-items:center;justify-content:center}
+.player-loader-poster{position:absolute;inset:0;background-size:cover;background-position:center;filter:blur(18px) brightness(.5)}
+.player-loader-poster::after{content:"";position:absolute;inset:0;background:rgba(0,0,0,.35)}
+.player-loader-spinner{
+  width:34px;height:34px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.18);
+  border-top-color:rgba(255,255,255,.85);
+  animation:spin .9s linear infinite;
+  position:relative;z-index:2;
+}
+.player-loader.done{opacity:0;visibility:hidden;transition:opacity .35s var(--ease),visibility .35s}
+@keyframes spin{to{transform:rotate(360deg)}}
 .player-iframe-wrap.player-instagram iframe{
   /* Instagram embeds are vertical; constrain & center */
   width:min(100%,440px);height:100%;margin:0 auto;display:block;
