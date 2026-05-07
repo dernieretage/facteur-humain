@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://dernieretage.github.io/facteur-humain/sitemap.xml
