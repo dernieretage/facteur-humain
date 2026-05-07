@@ -6,7 +6,7 @@
    1.  DATA  (artists, projects, captions, embedded URLs)
    ============================================================ */
 
-const LOKMANE_PORTFOLIO = "https://www.lokmanearchive.com/";
+const LOKMANE_PORTFOLIO = "https://www.lokmanearchive.com";
 
 const ARTISTS = [
   {
