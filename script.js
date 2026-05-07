@@ -627,6 +627,22 @@ const Player = (() => {
     if (e.key === "ArrowLeft") prev();
   });
 
+  // Touch swipe support
+  let tx = 0, ty = 0, dx = 0;
+  const stage_el = stage;
+  stage_el.addEventListener("touchstart", (e) => {
+    if (!e.touches[0]) return;
+    tx = e.touches[0].clientX; ty = e.touches[0].clientY; dx = 0;
+  }, { passive: true });
+  stage_el.addEventListener("touchmove", (e) => {
+    if (!e.touches[0]) return;
+    dx = e.touches[0].clientX - tx;
+  }, { passive: true });
+  stage_el.addEventListener("touchend", () => {
+    if (Math.abs(dx) > 60) (dx < 0 ? next : prev)();
+    dx = 0;
+  });
+
   return { open, close };
 })();
 

@@ -196,8 +196,8 @@ body.ready .loader{opacity:0;visibility:hidden}
 .artists-list a{display:block;cursor:none;transition:transform .4s var(--ease)}
 .artists-list a:hover{transform:translateY(-2px)}
 .artists-list .a-name{
-  font-family:var(--sans);font-weight:500;letter-spacing:.18em;text-transform:uppercase;
-  font-size:clamp(14px,1.5vw,17px);
+  font-family:var(--sans);font-weight:400;letter-spacing:.22em;text-transform:uppercase;
+  font-size:clamp(14px,1.55vw,18px);
   color:var(--fg);
   position:relative;display:inline-block;
 }
