@@ -1,11 +1,8 @@
 /* facteur.humain — Service Worker
-   Cache shell + assets for instant repeat loads. */
-const CACHE = "fh-v3";
-const SHELL = ["./", "./index.html", "./styles.css", "./script.js"];
+   Network-first for HTML/CSS/JS; cache-first for static assets (images/fonts). */
+const CACHE = "fh-v6";
 
-self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(CACHE).then(c => c.addAll(SHELL)).then(() => self.skipWaiting()));
-});
+self.addEventListener("install", (e) => { self.skipWaiting(); });
 self.addEventListener("activate", (e) => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -18,16 +15,30 @@ self.addEventListener("fetch", (e) => {
   if (req.method !== "GET") return;
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
-  e.respondWith(
-    caches.match(req).then(cached => {
-      const fetcher = fetch(req).then(res => {
+
+  const isAsset = /\.(jpg|jpeg|png|webp|gif|svg|woff2?|ttf|otf|mp4|webm)$/i.test(url.pathname);
+
+  if (isAsset) {
+    // Cache-first for static assets
+    e.respondWith(
+      caches.match(req).then(cached => cached || fetch(req).then(res => {
         if (res && res.status === 200 && res.type === "basic") {
           const copy = res.clone();
           caches.open(CACHE).then(c => c.put(req, copy));
         }
         return res;
-      }).catch(() => cached);
-      return cached || fetcher;
-    })
-  );
+      }))
+    );
+  } else {
+    // Network-first for HTML / CSS / JS
+    e.respondWith(
+      fetch(req).then(res => {
+        if (res && res.status === 200 && res.type === "basic") {
+          const copy = res.clone();
+          caches.open(CACHE).then(c => c.put(req, copy));
+        }
+        return res;
+      }).catch(() => caches.match(req))
+    );
+  }
 });

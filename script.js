@@ -302,7 +302,17 @@ function makePicture(src, alt) {
   const sw = document.createElement("source");
   sw.type = "image/webp";
   sw.srcset = webp;
-  const img = el("img", { src, alt, loading: "lazy", decoding: "async", width: "1280", height: "720" });
+  const img = el("img", { src, alt, loading: "lazy", decoding: "async" });
+  // When the image loads, propagate its natural aspect ratio to the frame
+  img.addEventListener("load", () => {
+    const frame = pic.parentElement;
+    if (frame && frame.classList.contains("tile-frame")) {
+      const tile = frame.closest(".tile");
+      if (tile && tile.classList.contains("auto")) {
+        frame.style.aspectRatio = `${img.naturalWidth} / ${img.naturalHeight}`;
+      }
+    }
+  }, { once: true });
   pic.appendChild(sw);
   pic.appendChild(img);
   return pic;
@@ -348,6 +358,7 @@ function renderSideIndex() {
 
 function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
   const ratioClass = item.ratio || photoRatio || "";
+  const isAuto = ratioClass === "auto";
   const playPath = '<path d="M8 5l11 7-11 7V5z" fill="currentColor"/>';
   const isVideo = !!item.url && !item.external;
   const showPlay = isVideo && !isPhoto;
@@ -355,7 +366,7 @@ function makeTile(item, artistName, isPhoto = false, photoRatio = null) {
   const platform = e ? e.type : "";
 
   const tile = el("a", {
-    class: `tile ${ratioClass} ${isPhoto ? "no-play" : ""} ${!showPlay && !isPhoto ? "no-play" : ""}`.trim(),
+    class: `tile ${isAuto ? "auto" : ratioClass} ${isPhoto ? "no-play" : ""} ${!showPlay && !isPhoto ? "no-play" : ""}`.trim(),
     href: item.url || "#",
     "data-cursor": "link",
     "data-img": item.img,
@@ -411,9 +422,9 @@ function renderArtistPage(a) {
 
   if (a.photos && a.photos.length) {
     const cols = pickGridCols(a.photos.length);
-    const grid = el("div", { class: `grid cols-${cols}` });
+    const grid = el("div", { class: `grid grid-photos cols-${cols}` });
     a.photos.forEach((src, i) => {
-      const tile = makeTile({ img: src, t: "" }, a.name, true, a.photoRatio);
+      const tile = makeTile({ img: src, t: "" }, a.name, true, "auto");
       tile.style.transitionDelay = (i * 60) + "ms";
       grid.appendChild(tile);
     });

@@ -135,12 +135,17 @@ body.ready .loader{opacity:0;visibility:hidden}
   font-family:var(--sans);font-weight:700;letter-spacing:-.025em;
   font-size:clamp(40px,8vw,96px);
   line-height:1;color:var(--fg);
-  display:flex;align-items:flex-end;justify-content:center;
-  gap:0;
+  width:100%;
+  text-align:center;
+  margin:0;
+}
+.hero-mark{
+  display:inline-flex;align-items:flex-end;justify-content:center;gap:0;
+  text-align:center;
 }
 .hero-l,.hero-r{display:inline-block;opacity:0;transform:translateY(20px);animation:heroIn 1.1s var(--ease) .35s forwards}
 .hero-r{animation-delay:.55s}
-.hero-dot{display:inline-block;font-weight:300;font-size:.55em;margin:0 .15ch .15em;opacity:0;transform:scale(0);animation:heroDot .6s var(--ease) 1.1s forwards}
+.hero-dot{display:inline-block;font-weight:300;font-size:.55em;margin:0 .14ch .14em;opacity:0;transform:scale(0);animation:heroDot .6s var(--ease) 1.1s forwards}
 @keyframes heroIn{to{opacity:1;transform:translateY(0)}}
 @keyframes heroDot{to{opacity:1;transform:scale(1)}}
 .hero-tag{
@@ -281,6 +286,20 @@ body.ready .loader{opacity:0;visibility:hidden}
 @media (max-width:760px){.grid.cols-4,.grid.cols-3{grid-template-columns:repeat(2,1fr)}}
 @media (max-width:480px){.grid.cols-4,.grid.cols-3,.grid.cols-2{grid-template-columns:1fr}}
 
+/* Photography masonry — varied heights, natural aspect ratios */
+.grid-photos{
+  display:block;
+  column-count:4;
+  column-gap:clamp(18px,2.2vw,30px);
+}
+.grid-photos.cols-3{column-count:3}
+.grid-photos.cols-2{column-count:2}
+.grid-photos .tile{display:block;width:100%;break-inside:avoid;margin:0 0 clamp(18px,2.2vw,30px) 0}
+.grid-photos .tile-frame{aspect-ratio:auto}
+@media (max-width:1100px){.grid-photos.cols-4{column-count:3}}
+@media (max-width:760px){.grid-photos.cols-4,.grid-photos.cols-3{column-count:2}}
+@media (max-width:480px){.grid-photos{column-count:1!important}}
+
 .tile{
   position:relative;display:block;cursor:none;
   opacity:0;transform:translateY(22px);
@@ -295,6 +314,9 @@ body.ready .loader{opacity:0;visibility:hidden}
 }
 .tile.tall .tile-frame{aspect-ratio:3/4}
 .tile.square .tile-frame{aspect-ratio:1/1}
+.tile.auto .tile-frame{aspect-ratio:auto;background:#000}
+.tile.auto .tile-frame img{height:auto;display:block;width:100%}
+.tile.auto picture{display:block}
 .tile-frame::after{
   content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,rgba(0,0,0,.4));
   opacity:0;transition:opacity .35s var(--ease);pointer-events:none;
