@@ -398,7 +398,8 @@ function platformLabel(p) {
 function renderArtistPage(a) {
   const cover = el("div", { class: "artist-cover", "data-reveal": "" },
     el("div", { class: "artist-cover-img", "data-bg": a.cover }),
-    el("h2", { class: "visually-hidden" }, a.name),
+    el("div", { class: "artist-cover-shade", "aria-hidden": "true" }),
+    el("h2", { class: "artist-name" }, a.name),
     el("span", { class: "artist-discipline" }, a.role)
   );
   const blocks = [cover];
@@ -784,6 +785,95 @@ function ready() {
   else window.addEventListener("load", finish, { once: true });
 }
 
+/* ============================================================
+  11.  ARTIST KEYBOARD / JUMP NAVIGATION
+   ============================================================ */
+
+function setupArtistNav() {
+  const artistIds = ARTISTS.map(a => a.id);
+  const sections = ["hero", ...artistIds, "contact"]
+    .map(id => document.getElementById(id))
+    .filter(Boolean);
+
+  const currentIndex = () => {
+    const y = window.scrollY + window.innerHeight * 0.3;
+    let idx = 0;
+    sections.forEach((s, i) => { if (s.offsetTop <= y) idx = i; });
+    return idx;
+  };
+  const jump = (delta) => {
+    const i = Math.max(0, Math.min(sections.length - 1, currentIndex() + delta));
+    sections[i].scrollIntoView({ behavior: "smooth", block: "start" });
+  };
+
+  document.addEventListener("keydown", (e) => {
+    // ignore if a modal is open
+    if (document.getElementById("player").classList.contains("open")) return;
+    // ignore if user is typing in an input
+    if (/^(input|textarea|select)$/i.test(e.target.tagName)) return;
+    if (e.key === "ArrowDown" || e.key === "PageDown" || e.key === "j") { e.preventDefault(); jump(1); }
+    else if (e.key === "ArrowUp" || e.key === "PageUp" || e.key === "k") { e.preventDefault(); jump(-1); }
+    else if (e.key === "Home") { e.preventDefault(); sections[0].scrollIntoView({ behavior: "smooth" }); }
+    else if (e.key === "End") { e.preventDefault(); sections[sections.length-1].scrollIntoView({ behavior: "smooth" }); }
+  });
+
+  // Floating prev/next buttons
+  const prev = el("button", { class: "jump-btn jump-prev", "data-cursor": "link", "aria-label": "Previous artist" },
+    svgIcon('<path d="M18 15l-6-6-6 6" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', 14, 14)
+  );
+  const next = el("button", { class: "jump-btn jump-next", "data-cursor": "link", "aria-label": "Next artist" },
+    svgIcon('<path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>', 14, 14)
+  );
+  prev.addEventListener("click", () => jump(-1));
+  next.addEventListener("click", () => jump(1));
+  document.body.appendChild(prev);
+  document.body.appendChild(next);
+}
+
+/* ============================================================
+  12.  HAMBURGER MENU (mobile)
+   ============================================================ */
+
+function setupMobileMenu() {
+  const trigger = $("#menuToggle");
+  const overlay = $("#menuOverlay");
+  if (!trigger || !overlay) return;
+
+  // Build menu items
+  const list = $("#menuList");
+  ARTISTS.forEach((a, i) => {
+    list.appendChild(el("li", {},
+      el("a", { href: "#" + a.id, "data-cursor": "link" },
+        el("span", { class: "menu-num" }, (i + 1).toString().padStart(2, "0")),
+        el("span", { class: "menu-name" }, a.name),
+        el("span", { class: "menu-role" }, a.role)
+      )
+    ));
+  });
+
+  const open = () => {
+    overlay.classList.add("open");
+    overlay.setAttribute("aria-hidden", "false");
+    trigger.setAttribute("aria-expanded", "true");
+    document.body.style.overflow = "hidden";
+  };
+  const close = () => {
+    overlay.classList.remove("open");
+    overlay.setAttribute("aria-hidden", "true");
+    trigger.setAttribute("aria-expanded", "false");
+    document.body.style.overflow = "";
+  };
+  trigger.addEventListener("click", () => {
+    overlay.classList.contains("open") ? close() : open();
+  });
+  overlay.addEventListener("click", (e) => {
+    if (e.target === overlay || e.target.closest("a")) close();
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && overlay.classList.contains("open")) close();
+  });
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   if ("scrollRestoration" in history) history.scrollRestoration = "manual";
   renderArtistsList();
@@ -797,6 +887,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCoverParallax();
   bindPlayerToTiles();
   setupAnchorClicks();
+  setupArtistNav();
+  setupMobileMenu();
   setYear();
   ready();
 
